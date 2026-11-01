@@ -72,6 +72,9 @@ def sanitize_text(input_file, output_file, fields, faker, seed=None):
         faker (Faker): Faker instance for generating fake data.
         seed (int, optional): Seed value for Faker's random generator for reproducibility.
     """
+    # seed is tested for truth, here and in the CSV twin below, so a
+    # seed of 0 is silently ignored and the run is not reproducible
+    # even though the user passed the flag.
     if seed:
         random.seed(seed)
         faker.seed(seed)  # Seed the Faker instance for reproducibility
@@ -103,6 +106,11 @@ def sanitize_text(input_file, output_file, fields, faker, seed=None):
                     else:
                         # Default masking with random string
                         replacement = faker.pystr(min_chars=10, max_chars=20)
+                    # One replacement value is generated per field per
+                    # line and reused for every match on that line. Two
+                    # different addresses on one line both become the
+                    # same fake address, and a later pattern can match
+                    # inside the fake text an earlier field inserted.
                     sanitized_line, made = re.subn(
                         field, lambda match: replacement, sanitized_line
                     )
@@ -131,6 +139,9 @@ def sanitize_text(input_file, output_file, fields, faker, seed=None):
         sys.exit(1)
 
 
+# The CSV path behaves differently from the text path above: every
+# row gets a fresh fake value, and an empty cell is filled with fake
+# data and counted as masked just like a cell that held real data.
 def sanitize_csv(input_file, output_file, fields, faker, seed=None):
     """
     Sanitizes a CSV file by replacing data in specified columns with fake data.
