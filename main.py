@@ -35,7 +35,7 @@ def setup_argparse():
     parser.add_argument(
         "--fields",
         nargs="+",
-        help="A list of fields to mask. For CSV files, each field is a column header, matched case-insensitively. For text files, each field is a regex pattern that matches the text to mask, for example '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}' for email addresses.",
+        help="A list of fields to mask. For CSV files, each field is a column header, matched case-insensitively. For text files, each field is a regex pattern that matches the text to mask, for example '[A-Za-z0-9._%%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}' for email addresses.",
         required=True,
         type=str
     )
